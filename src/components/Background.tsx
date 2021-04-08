@@ -21,11 +21,13 @@ export class Background extends React.PureComponent<{}, BackgroundState> {
       });
     } else {
       //TODO: randomize image
-      const url = chrome.storage.local.get("img0", (result: any) => {
-        this.setState({
-          url: result.img0,
+      if (process.env.NODE_ENV === "production") {
+        const url = chrome.storage.local.get("img0", (result: any) => {
+          this.setState({
+            url: result.img0,
+          });
         });
-      });
+      }
     }
   }
   render() {
@@ -33,7 +35,9 @@ export class Background extends React.PureComponent<{}, BackgroundState> {
       <div
         className="Background"
         style={{ backgroundImage: `url("${this.state.url}")` }}
-      ></div>
+      >
+        {/* <img src={`${this.state.url}`} alt="background"/> */}
+      </div>
     );
   }
 }

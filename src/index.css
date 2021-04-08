@@ -7,6 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: black; /* TODO: change background color based on dark/light mode? */
   min-height: 100vh;
+  overscroll-behavior: none;
 }
 
 code {
@@ -77,6 +78,9 @@ code {
 }
 
 .Background {
+  /* position: fixed; */
+  overflow:unset;
+  background-attachment: fixed;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
