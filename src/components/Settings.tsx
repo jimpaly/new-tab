@@ -19,7 +19,7 @@ export class Settings extends React.PureComponent<SettingsProps, SettingsState> 
   }
   render() {
     return (
-      <div className={`left-align ${this.props.className ?? ""}`}>
+      <div className={`settings left-align ${this.props.className ?? ""}`}>
         <div className={`panel ${this.state.isShowing ? "show-fade" : "hide-fade"}`}>
           <ImageChooser setBackground={this.props.setBackground ?? (() => {})} />
         </div>

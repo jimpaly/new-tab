@@ -22,6 +22,7 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
   }
 
   async componentDidMount() {
+    console.log(await DB.getAllIds());
     this.setState({
       images: await DB.getMany(...(await DB.getAllIds())),
     });
@@ -99,6 +100,13 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
   render() {
     return (
       <div>
+        <div className="card-list">
+          {this.state.images.map((image, idx) => (
+            <React.Suspense fallback={<div>Loading...</div>} key={idx}>
+              <ImageCard image={image} onClick={() => this.props.setBackground(image)} />
+            </React.Suspense>
+          ))}
+        </div>
         <input
           multiple
           type="file"

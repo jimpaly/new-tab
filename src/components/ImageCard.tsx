@@ -2,10 +2,10 @@ import * as React from "react";
 import * as DB from "../wallpaper-db";
 
 interface ImageCardProps {
-  id: string;
+  image: DB.Wallpaper;
+  onClick?: () => void;
 }
 interface ImageCardState {
-  data: DB.WallPaperData | null;
   thumbnail: string | null;
 }
 
@@ -13,17 +13,20 @@ export default class ImageCard extends React.PureComponent<ImageCardProps, Image
   constructor(props: ImageCardProps) {
     super(props);
     this.state = {
-      data: null,
       thumbnail: null,
     };
   }
-  async componentDidMount() {}
+  async componentDidMount() {
+    this.setState({
+      thumbnail: await this.props.image.loadImage(),
+    });
+  }
   render() {
-    if (this.state.data && this.state.thumbnail) {
+    if (this.state.thumbnail) {
       return (
-        <div>
+        <button className="focus-button image-card" onClick={this.props.onClick}>
           <img src={this.state.thumbnail} alt="thumbnail" />
-        </div>
+        </button>
       );
     } else {
       return (

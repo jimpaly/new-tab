@@ -1,4 +1,4 @@
-export interface WallPaperData {
+export interface WallpaperData {
   createdAt: Date; // tags?
 }
 
@@ -6,14 +6,14 @@ export class Wallpaper {
   id: string;
   createdAt: Date | null;
 
-  constructor(id: string, data: Partial<WallPaperData>) {
+  constructor(id: string, data?: Partial<WallpaperData>) {
     this.id = id;
-    this.createdAt = data.createdAt ?? null;
+    this.createdAt = data?.createdAt ?? null;
   }
 
   loadImage() {
     return new Promise<string | null>((resolve) => {
-      if (process.env.NODE_ENV !== "production") return resolve(null);
+      if (process.env.NODE_ENV !== "production") return resolve(this.id);
       chrome.storage.local.get(`image-${this.id}`, (result: any) => {
         if (result && typeof result[`image-${this.id}`] === "string") {
           resolve(result[`image-${this.id}`]);
@@ -27,7 +27,14 @@ export class Wallpaper {
 
 export function getAllIds() {
   return new Promise<string[]>((resolve) => {
-    if (process.env.NODE_ENV !== "production") return resolve([]);
+    if (process.env.NODE_ENV !== "production") {
+      return resolve(
+        Array.from(
+          { length: 9 },
+          (v, i) => `https://picsum.photos/${(8 + i) * 100}/${(16 - i) * 100}`
+        )
+      );
+    }
     chrome.storage.local.get("images", (result: any) => {
       if (result && Array.isArray(result.images)) {
         resolve(result.images);
@@ -47,7 +54,7 @@ export async function getRandom() {
 
 export function getMany(...ids: string[]) {
   return new Promise<Wallpaper[]>((resolve) => {
-    if (process.env.NODE_ENV !== "production") return resolve([]);
+    if (process.env.NODE_ENV !== "production") return resolve(ids.map((id) => new Wallpaper(id)));
     chrome.storage.local.get(
       ids.map((id) => `data-${id}`),
       (result: any) => {
@@ -95,7 +102,7 @@ export function add(file: File) {
         // Set data to be saved
         let data: any = {};
         data["images"] = [...(await getAllIds()), id];
-        data[`data-${id}`] = { createdAt: new Date() } as WallPaperData;
+        data[`data-${id}`] = { createdAt: new Date() } as WallpaperData;
         // data[`thumbnail-${id}`] = "stuff";
         data[`image-${id}`] = reader.result;
         // Save data
