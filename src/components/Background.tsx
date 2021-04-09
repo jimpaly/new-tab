@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as DB from "../wallpaper-db";
 
 interface BackgroundState {
   url: string;
@@ -14,28 +15,18 @@ export class Background extends React.PureComponent<{}, BackgroundState> {
   async componentDidMount() {
     this.setImage();
   }
-  setImage(url?: string) {
-    if (url) {
-      this.setState({
-        url: url,
-      });
-    } else {
-      //TODO: randomize image
-      if (process.env.NODE_ENV === "production") {
-        const url = chrome.storage.local.get("img0", (result: any) => {
-          this.setState({
-            url: result.img0,
-          });
-        });
+  async setImage(wallpaper?: DB.Wallpaper) {
+    if (!wallpaper) wallpaper = (await DB.getRandom()) ?? undefined;
+    if (wallpaper) {
+      const url = await wallpaper.loadImage();
+      if (url) {
+        this.setState({ url: url });
       }
     }
   }
   render() {
     return (
-      <div
-        className="Background"
-        style={{ backgroundImage: `url("${this.state.url}")` }}
-      >
+      <div className="Background" style={{ backgroundImage: `url("${this.state.url}")` }}>
         {/* <img src={`${this.state.url}`} alt="background"/> */}
       </div>
     );

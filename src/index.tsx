@@ -2,17 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { Background, Clock, ImageChooser } from "./components";
+import { Background, Clock, Settings } from "./components";
+import * as DB from "./wallpaper-db";
 
 export default class App extends React.PureComponent<{}, {}> {
-  backgroundElement: React.RefObject<Background>;
-  constructor(props: {}) {
-    super(props);
-    this.backgroundElement = React.createRef();
-    this.state = {
-      background: "logo192.png",
-    };
-  }
+  backgroundElement: React.RefObject<Background> = React.createRef();
   render() {
     return (
       <div className="App">
@@ -22,9 +16,10 @@ export default class App extends React.PureComponent<{}, {}> {
             this.backgroundElement.current?.setImage();
           }}
         />
-        <ImageChooser
-          setImage={(url: string) =>
-            this.backgroundElement.current?.setImage(url)
+        <Settings
+          className="bottom-left"
+          setBackground={(wallpaper: DB.Wallpaper) =>
+            this.backgroundElement.current?.setImage(wallpaper)
           }
         />
       </div>

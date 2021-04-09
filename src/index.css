@@ -71,15 +71,35 @@ code {
   transform: translate(-50%, -50%);
 }
 
-.ImageChooser {
+.bottom-left {
   position: absolute;
   bottom: 0%;
   left: 0%;
 }
 
+.hide-fade {
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 200ms linear, opacity 200ms linear;
+}
+.show-fade {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 200ms linear;
+}
+
+.panel {
+  background-color: #ffffffa0;
+  padding: 5pt;
+}
+
+.left-align {
+  text-align: left;
+}
+
 .Background {
   /* position: fixed; */
-  overflow:unset;
+  overflow: unset;
   background-attachment: fixed;
   background-position: center center;
   background-repeat: no-repeat;
