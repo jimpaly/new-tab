@@ -8,7 +8,7 @@ export class Background extends React.PureComponent<{}, BackgroundState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      url: "/default.png",
+      url: "/default.svg",
     };
   }
   async componentDidMount() {
