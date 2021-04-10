@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as DB from "../wallpaper-db";
-import JSZip from "jszip";
+import { oneLine } from "common-tags";
 
 interface ImageCardProps {
   image: DB.Wallpaper;
@@ -34,7 +34,15 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
       <button className="stadium" onClick={() => props.image.download()}>
         download
       </button>
-      <button className="stadium danger" onClick={() => {}}>
+      <button
+        className="stadium danger"
+        onClick={() => {
+          const download = window.confirm(oneLine`
+            Before deleting this image forever, 
+            would you like to download it, just in case?`);
+          if (download) props.image.download();
+        }}
+      >
         delete
       </button>
     </div>
@@ -42,65 +50,3 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
 };
 
 export default ImageCard;
-
-// export default class ImageCard extends React.PureComponent<ImageCardProps, ImageCardState> {
-//   constructor(props: ImageCardProps) {
-//     super(props);
-//     this.state = {
-//       thumbnail: null,
-//     };
-//   }
-
-//   async componentDidMount() {
-//     console.log(`mounted ${this.props.image.id}`);
-//     if (!this.props.loaded) return;
-//     this.setState({
-//       thumbnail: await this.props.image.loadImage(),
-//     });
-//   }
-
-//   componentWillUnmount() {
-//     console.log(`unmounted ${this.props.image.id}`);
-//   }
-
-//   async componentDidUpdate() {
-//     console.log(`updated ${this.props.loaded}`);
-//     if (!this.props.loaded) return;
-//     this.setState({
-//       thumbnail: await this.props.image.loadImage(),
-//     });
-//   }
-
-//   async load() {
-//     this.setState({
-//       thumbnail: await this.props.image.loadImage(),
-//     });
-//   }
-
-//   unload() {
-//     this.setState({
-//       thumbnail: null,
-//     });
-//   }
-
-//   render() {
-//     return (
-//       <div className="v-list">
-//         <button
-//           className="image focus-button"
-//           style={{
-//             backgroundImage: `url("${this.state.thumbnail}")`,
-//             width: "100px",
-//             height: "100px",
-//             borderRadius: "10px",
-//           }}
-//           onClick={this.props.onClick}
-//         >
-//           {this.state.thumbnail ? "" : "loading..."}
-//         </button>
-//         <button className="stadium">click1</button>
-//         <button className="stadium">click2</button>
-//       </div>
-//     );
-//   }
-// }
