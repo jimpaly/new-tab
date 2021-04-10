@@ -20,10 +20,11 @@ export class Settings extends React.PureComponent<SettingsProps, SettingsState> 
   render() {
     return (
       <div className={`settings left-align ${this.props.className ?? ""}`}>
-        <div className={`panel ${this.state.isShowing ? "show-fade" : "hide-fade"}`}>
+        <div className={`panel ${this.state.isShowing ? "fade-in" : "fade-out"}`}>
           <ImageChooser setBackground={this.props.setBackground ?? (() => {})} />
         </div>
         <button
+          className="stadium"
           onClick={() => {
             this.setState({
               isShowing: !this.state.isShowing,

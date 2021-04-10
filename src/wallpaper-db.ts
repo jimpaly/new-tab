@@ -30,7 +30,7 @@ export function getAllIds() {
     if (process.env.NODE_ENV !== "production") {
       return resolve(
         Array.from(
-          { length: 9 },
+          { length: 5 },
           (v, i) => `https://picsum.photos/${(8 + i) * 100}/${(16 - i) * 100}`
         )
       );
@@ -89,7 +89,7 @@ export function add(file: File) {
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
 
   // Read file with FileReader
-  return new Promise<Wallpaper | "notImage" | "tooBig" | null>((resolve, reject) => {
+  return new Promise<Wallpaper | "notImage" | "tooBig" | null>((resolve) => {
     if (process.env.NODE_ENV !== "production") return resolve(null);
     // Error if file isn't an image
     if (!file.type.startsWith("image/")) return resolve("notImage");

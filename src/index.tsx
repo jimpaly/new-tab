@@ -9,7 +9,7 @@ export default class App extends React.PureComponent<{}, {}> {
   backgroundElement: React.RefObject<Background> = React.createRef();
   render() {
     return (
-      <div className="App">
+      <div>
         <Background ref={this.backgroundElement} />
         <Clock
           updateBackground={async () => {

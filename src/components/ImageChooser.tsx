@@ -1,6 +1,7 @@
 import * as React from "react";
 import { oneLine, stripIndents } from "common-tags";
 import * as DB from "../wallpaper-db";
+import "../index.css";
 
 const ImageCard = React.lazy(() => import("./ImageCard"));
 
@@ -99,8 +100,8 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
 
   render() {
     return (
-      <div>
-        <div className="card-list">
+      <div className="v-list">
+        <div className="h-list" style={{ gap: "10px" }}>
           {this.state.images.map((image, idx) => (
             <React.Suspense fallback={<div>Loading...</div>} key={idx}>
               <ImageCard image={image} onClick={() => this.props.setBackground(image)} />

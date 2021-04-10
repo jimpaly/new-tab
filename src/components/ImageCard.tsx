@@ -24,9 +24,20 @@ export default class ImageCard extends React.PureComponent<ImageCardProps, Image
   render() {
     if (this.state.thumbnail) {
       return (
-        <button className="focus-button image-card" onClick={this.props.onClick}>
-          <img src={this.state.thumbnail} alt="thumbnail" />
-        </button>
+        <div className="focus-button v-list">
+          <button
+            className="image focus-button"
+            style={{
+              backgroundImage: `url("${this.state.thumbnail}")`,
+              width: "100px",
+              height: "100px",
+              borderRadius: "10px",
+            }}
+            onClick={this.props.onClick}
+          ></button>
+          <button className="stadium">click1</button>
+          <button className="stadium">click2</button>
+        </div>
       );
     } else {
       return (

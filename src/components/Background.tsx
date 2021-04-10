@@ -26,7 +26,7 @@ export class Background extends React.PureComponent<{}, BackgroundState> {
   }
   render() {
     return (
-      <div className="Background" style={{ backgroundImage: `url("${this.state.url}")` }}>
+      <div className="background" style={{ backgroundImage: `url("${this.state.url}")` }}>
         {/* <img src={`${this.state.url}`} alt="background"/> */}
       </div>
     );
