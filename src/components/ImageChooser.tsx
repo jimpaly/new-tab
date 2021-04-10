@@ -2,43 +2,29 @@ import * as React from "react";
 import { oneLine, stripIndents } from "common-tags";
 import * as DB from "../wallpaper-db";
 import "../index.css";
-
-const ImageCard = React.lazy(() => import("./ImageCard"));
+import ImageCard from "./ImageCard";
+// const ImageCard = React.lazy(() => import("./ImageCard"));
 
 interface ChooserProps {
   setBackground(url: DB.Wallpaper): void;
 }
-interface ChooserState {
-  images: DB.Wallpaper[];
-  loadRange: {
-    min: number;
-    max: number;
-  };
-}
 
-export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState> {
-  chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
-  scrollElement: React.RefObject<HTMLDivElement> = React.createRef();
+export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
+  let chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
+  const [images, setImages] = React.useState<DB.Wallpaper[]>([]);
+  const [loadRange, setLoadRange] = React.useState<{ min: Number; max: number }>({
+    min: 0,
+    max: 9,
+  });
 
-  constructor(props: ChooserProps) {
-    super(props);
-    this.state = {
-      images: [],
-      loadRange: {
-        min: 0,
-        max: 9,
-      },
-    };
-  }
-
-  async componentDidMount() {
-    this.setState({
-      images: await DB.getMany(...(await DB.getAllIds())),
+  React.useEffect(() => {
+    DB.getAllIds().then(async (ids) => {
+      setImages(await DB.getMany(...ids));
     });
-  }
+  }, []);
 
   /** Add background images to Chrome's local storage */
-  async addBackgrounds(files: File[]) {
+  async function addBackgrounds(files: File[]) {
     let errors: { notImage: File[]; tooBig: File[]; read: File[] } = {
       notImage: [],
       tooBig: [],
@@ -55,9 +41,9 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
       // Error reading file
       else if (newWallpaper === null) errors.read.push(file);
       else {
-        let images = this.state.images.slice();
-        images.push(newWallpaper);
-        this.setState({ images: images });
+        let imgs = images.slice();
+        imgs.push(newWallpaper);
+        setImages(imgs);
         lastWallpaper = newWallpaper;
       }
     }
@@ -76,11 +62,11 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
       }
       if (confirm) {
         for (const file of errors.tooBig) {
-          let images = [...this.state.images];
+          let imgs = images.slice();
           const newWallpaper = await DB.add(file);
           if (newWallpaper && newWallpaper !== "notImage" && newWallpaper !== "tooBig")
-            images.push(newWallpaper);
-          this.setState({ images: images });
+            imgs.push(newWallpaper);
+          setImages(imgs);
         }
       }
     }
@@ -107,47 +93,48 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
   }
 
   /** Load and unload images not in view */
-  loadUnload(scrollPos: number) {
+  function loadUnload(scrollPos: number) {
     const first = Math.floor(scrollPos / 5) * 5;
-    if (first - 5 === this.state.loadRange.min && first + 9 === this.state.loadRange.max) return;
-    this.setState({
-      loadRange: {
-        min: first - 5,
-        max: first + 9,
-      },
+    if (first - 5 === loadRange.min && first + 9 === loadRange.max) return;
+    setLoadRange({
+      min: first - 5,
+      max: first + 9,
     });
   }
 
-  render() {
-    return (
-      <div className="v-list">
-        <div
-          className="h-list"
-          style={{ gap: "10px", paddingBottom: "3px" }}
-          ref={this.scrollElement}
-          onScroll={(stuff) => this.loadUnload(Math.floor(stuff.currentTarget.scrollLeft / 110))}
-        >
-          {this.state.images.map((image, idx) => (
-            <React.Suspense fallback={<div>Loading...</div>} key={idx}>
-              <ImageCard
-                image={image}
-                loaded={this.state.loadRange.min <= idx && this.state.loadRange.max >= idx}
-                onClick={() => this.props.setBackground(image)}
-              />
-            </React.Suspense>
-          ))}
-        </div>
-        <input
-          multiple
-          type="file"
-          ref={this.chooserElement}
-          onChange={async () => {
-            if (!this.chooserElement.current?.files?.length) return;
-            const bg = await this.addBackgrounds(Array.from(this.chooserElement.current.files));
-            if (bg) this.props.setBackground(bg);
-          }}
-        />
+  return (
+    <div className="v-list">
+      <div
+        className="h-list"
+        style={{ gap: "10px", paddingBottom: "3px" }}
+        onScroll={(element) => loadUnload(Math.floor(element.currentTarget.scrollLeft / 110))}
+      >
+        {images.map((image, idx) => (
+          // <React.Suspense fallback={<div>Loading...</div>} key={idx}>
+          <ImageCard
+            key={image.id}
+            image={image}
+            loaded={loadRange.min <= idx && loadRange.max >= idx}
+            onClick={() => props.setBackground(image)}
+            onDelete={() => {
+              let imgs = images.slice();
+              imgs.splice(idx, 1);
+              setImages(imgs);
+            }}
+          />
+          // </React.Suspense>
+        ))}
       </div>
-    );
-  }
-}
+      <input
+        multiple
+        type="file"
+        ref={chooserElement}
+        onChange={async () => {
+          if (!chooserElement.current?.files?.length) return;
+          const bg = await addBackgrounds(Array.from(chooserElement.current.files));
+          if (bg) props.setBackground(bg);
+        }}
+      />
+    </div>
+  );
+};

@@ -48,15 +48,36 @@ export class Wallpaper {
     chrome.storage.local.set(data);
   }
 
-  async download() {
+  async download(location = "") {
     let image = await this.loadImage();
     if (!image) return alert("Oops! Something went wrong while trying to load the image!");
     const extension = image.slice(image.indexOf("image/") + 6, image.indexOf(";"));
     if (process.env.NODE_ENV !== "production")
-      alert(oneLine`
+      return alert(oneLine`
         Can't actually download in development version, 
         but it should download wallpaper.${extension} with ${image}`);
-    chrome.downloads.download({ filename: `wallpaper.${extension}`, url: image, saveAs: true });
+    chrome.downloads.download({
+      filename: `${location}wallpaper.${extension}`,
+      url: image,
+      saveAs: true,
+    });
+  }
+
+  delete() {
+    return new Promise<void>((resolve, reject) => {
+      if (process.env.NODE_ENV !== "production") reject("Not in production mode");
+      chrome.storage.local.remove(
+        [`image-${this.id}`, `data-${this.id}`, `thumb-${this.id}`],
+        async () => {
+          let ids = await getAllIds();
+          const idx = ids.indexOf(this.id);
+          ids.splice(idx, 1);
+          chrome.storage.local.set({ images: ids }, () => {
+            resolve();
+          });
+        }
+      );
+    });
   }
 }
 
@@ -153,7 +174,7 @@ export function add(file: File) {
           data[`thumb-${id}`] = canvas.toDataURL("image/jpeg", 0.5);
           // Save data
           chrome.storage.local.set(data, () => {
-            console.log(chrome.runtime.lastError);
+            if (chrome.runtime.lastError) console.log(chrome.runtime.lastError);
             resolve(new Wallpaper(id, data[`data-${id}`]));
           });
         };

@@ -6,10 +6,12 @@ interface ImageCardProps {
   image: DB.Wallpaper;
   loaded: boolean;
   onClick?: () => void;
+  onDelete: () => void;
 }
 
 export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
+
   React.useEffect(() => {
     if (props.loaded && !thumbnail)
       props.image.loadThumbnail().then((image) => {
@@ -36,11 +38,13 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
       </button>
       <button
         className="stadium danger"
-        onClick={() => {
+        onClick={async () => {
           const download = window.confirm(oneLine`
             Before deleting this image forever, 
             would you like to download it, just in case?`);
-          if (download) props.image.download();
+          if (download) await props.image.download();
+          props.image.delete();
+          props.onDelete();
         }}
       >
         delete
