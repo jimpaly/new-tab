@@ -1,14 +1,15 @@
 import * as Canvas from "canvas";
+import { oneLine } from "common-tags";
 
 export interface WallpaperData {
-  createdAt: Date; // tags?
+  createdAt?: Date; // tags?
 }
 
 export class Wallpaper {
   id: string;
   createdAt: Date | null;
 
-  constructor(id: string, data?: Partial<WallpaperData>) {
+  constructor(id: string, data: Partial<WallpaperData>) {
     this.id = id;
     this.createdAt = data?.createdAt ?? null;
   }
@@ -37,6 +38,25 @@ export class Wallpaper {
         }
       });
     });
+  }
+
+  saveData() {
+    let data: any = {},
+      meta: Partial<WallpaperData> = {};
+    if (this.createdAt) meta.createdAt = this.createdAt;
+    data[`data-${this.id}`] = meta;
+    chrome.storage.local.set(data);
+  }
+
+  async download() {
+    let image = await this.loadImage();
+    if (!image) return alert("Oops! Something went wrong while trying to load the image!");
+    const extension = image.slice(image.indexOf("image/") + 6, image.indexOf(";"));
+    if (process.env.NODE_ENV !== "production")
+      alert(oneLine`
+        Can't actually download in development version, 
+        but it should download wallpaper.${extension} with ${image}`);
+    chrome.downloads.download({ filename: `wallpaper.${extension}`, url: image, saveAs: true });
   }
 }
 
@@ -69,7 +89,8 @@ export async function getRandom() {
 
 export function getMany(...ids: string[]) {
   return new Promise<Wallpaper[]>((resolve) => {
-    if (process.env.NODE_ENV !== "production") return resolve(ids.map((id) => new Wallpaper(id)));
+    if (process.env.NODE_ENV !== "production")
+      return resolve(ids.map((id) => new Wallpaper(id, {})));
     chrome.storage.local.get(
       ids.map((id) => `data-${id}`),
       (result: any) => {
@@ -117,7 +138,8 @@ export function add(file: File) {
         // Set data to be saved
         let data: any = {};
         data["images"] = [...(await getAllIds()), id];
-        data[`data-${id}`] = { createdAt: new Date() } as WallpaperData;
+        const meta: WallpaperData = { createdAt: new Date() };
+        data[`data-${id}`] = meta;
         data[`image-${id}`] = reader.result;
         // Compress for thumbnails
         const img = new Image();
@@ -132,8 +154,6 @@ export function add(file: File) {
           // Save data
           chrome.storage.local.set(data, () => {
             console.log(chrome.runtime.lastError);
-            console.log("saved:");
-            console.info(data);
             resolve(new Wallpaper(id, data[`data-${id}`]));
           });
         };

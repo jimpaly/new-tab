@@ -32,11 +32,6 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
   }
 
   async componentDidMount() {
-    // if (this.scrollElement.current)
-    //   this.scrollElement.current.onscroll = (options) => {
-    //     console.log(options);
-    //     console.log(this.scrollElement.current?.scrollHeight);
-    //   };
     this.setState({
       images: await DB.getMany(...(await DB.getAllIds())),
     });
@@ -111,6 +106,7 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
     return lastWallpaper;
   }
 
+  /** Load and unload images not in view */
   loadUnload(scrollPos: number) {
     const first = Math.floor(scrollPos / 5) * 5;
     if (first - 5 === this.state.loadRange.min && first + 9 === this.state.loadRange.max) return;

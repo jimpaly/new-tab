@@ -19,14 +19,25 @@ button {
   border: 2px solid rgb(54, 224, 54);
   transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms;
 }
+button.danger {
+  border-color: red;
+}
 button:hover {
   background-color: lightgreen;
   border-color: green;
+}
+button.danger:hover {
+  background-color: lightpink;
+  border-color: brown;
 }
 button:active {
   background-color: green;
   border-color: green;
   transition: background-color 100ms, border-color 100ms;
+}
+button.danger:active {
+  background-color: brown;
+  border-color: brown;
 }
 button:focus {
   outline: none;

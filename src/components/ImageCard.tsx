@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as DB from "../wallpaper-db";
+import JSZip from "jszip";
 
 interface ImageCardProps {
   image: DB.Wallpaper;
@@ -30,8 +31,12 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
       >
         {thumbnail ? "" : "loading..."}
       </button>
-      <button className="stadium">click1</button>
-      <button className="stadium">click2</button>
+      <button className="stadium" onClick={() => props.image.download()}>
+        download
+      </button>
+      <button className="stadium danger" onClick={() => {}}>
+        delete
+      </button>
     </div>
   );
 };
