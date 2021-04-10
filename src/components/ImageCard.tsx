@@ -11,30 +11,43 @@ interface ImageCardProps {
 
 export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
+  const [enabled, setEnabled] = React.useState<boolean>(props.image.enabled);
 
   React.useEffect(() => {
-    if (props.loaded && !thumbnail)
+    if (props.loaded)
       props.image.loadThumbnail().then((image) => {
         if (image) setThumbnail(image);
       });
-    if (!props.loaded && thumbnail) setThumbnail(null);
-  }, [props.loaded, props.image, thumbnail]);
+    if (!props.loaded) setThumbnail(null);
+  }, [props.loaded, props.image]);
+
   return (
     <div className="v-list">
       <button
-        className="image focus-button"
+        className={`image focus-button`}
+        disabled={!enabled}
         style={{
           backgroundImage: thumbnail ? `url("${thumbnail}")` : "",
           width: "100px",
           height: "100px",
           borderRadius: "10px",
         }}
-        onClick={thumbnail ? props.onClick : () => {}}
+        onClick={thumbnail && enabled ? props.onClick : () => {}}
       >
         {thumbnail ? "" : "loading..."}
       </button>
       <button className="stadium" onClick={() => props.image.download()}>
         download
+      </button>
+      <button
+        className="stadium"
+        onClick={() => {
+          props.image.enabled = !props.image.enabled;
+          props.image.saveData();
+          setEnabled(props.image.enabled);
+        }}
+      >
+        {props.image.enabled ? "disable" : "enable"}
       </button>
       <button
         className="stadium danger"

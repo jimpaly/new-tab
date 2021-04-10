@@ -3,15 +3,18 @@ import { oneLine } from "common-tags";
 
 export interface WallpaperData {
   createdAt?: Date; // tags?
+  enabled: boolean;
 }
 
 export class Wallpaper {
   id: string;
   createdAt: Date | null;
+  enabled: boolean;
 
   constructor(id: string, data: Partial<WallpaperData>) {
     this.id = id;
-    this.createdAt = data?.createdAt ?? null;
+    this.createdAt = data.createdAt ?? null;
+    this.enabled = data.enabled ?? true;
   }
 
   loadImage() {
@@ -40,12 +43,17 @@ export class Wallpaper {
     });
   }
 
-  saveData() {
-    let data: any = {},
-      meta: Partial<WallpaperData> = {};
-    if (this.createdAt) meta.createdAt = this.createdAt;
+  async saveData() {
+    if (process.env.NODE_ENV !== "production") return;
+    let data: any = {};
+    const meta: WallpaperData = {
+      createdAt: this.createdAt ?? undefined,
+      enabled: this.enabled,
+    };
     data[`data-${this.id}`] = meta;
-    chrome.storage.local.set(data);
+    return new Promise<void>((resolve) => {
+      chrome.storage.local.set(data, () => resolve());
+    });
   }
 
   async download(location = "") {
@@ -102,13 +110,13 @@ export function getAllIds() {
 }
 
 export async function getRandom() {
-  if (process.env.NODE_ENV !== "production") return null;
-  const ids = await getAllIds();
-  if (ids.length > 0) return get(ids[Math.floor(Math.random() * ids.length)]);
+  const images = await (await getMany(await getAllIds())).filter((image) => image.enabled);
+  console.log(images);
+  if (images.length > 0) return images[Math.floor(Math.random() * images.length)];
   else return null;
 }
 
-export function getMany(...ids: string[]) {
+export function getMany(ids: string[]) {
   return new Promise<Wallpaper[]>((resolve) => {
     if (process.env.NODE_ENV !== "production")
       return resolve(ids.map((id) => new Wallpaper(id, {})));
@@ -159,7 +167,7 @@ export function add(file: File) {
         // Set data to be saved
         let data: any = {};
         data["images"] = [...(await getAllIds()), id];
-        const meta: WallpaperData = { createdAt: new Date() };
+        const meta: WallpaperData = { createdAt: new Date(), enabled: true };
         data[`data-${id}`] = meta;
         data[`image-${id}`] = reader.result;
         // Compress for thumbnails

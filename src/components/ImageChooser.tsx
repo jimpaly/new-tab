@@ -19,7 +19,7 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
 
   React.useEffect(() => {
     DB.getAllIds().then(async (ids) => {
-      setImages(await DB.getMany(...ids));
+      setImages(await DB.getMany(ids));
     });
   }, []);
 

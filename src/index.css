@@ -16,9 +16,15 @@ code {
 button {
   cursor: pointer;
   padding: 5px;
-  border: 2px solid rgb(54, 224, 54);
-  transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms;
+  border: 2px solid;
+  transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms,
+    opacity 300ms;
 }
+button.danger:disabled:hover,
+button {
+  border-color: rgb(54, 224, 54);
+}
+button:disabled:hover,
 button.danger {
   border-color: red;
 }
@@ -39,12 +45,19 @@ button.danger:active {
   background-color: brown;
   border-color: brown;
 }
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
 button:focus {
   outline: none;
 }
 .focus-button:focus {
   border-color: green;
   border-width: 5px;
+}
+.focus-button.red:focus {
+  border-color: brown;
 }
 
 /* POSITIONING */
