@@ -1,3 +1,5 @@
+import * as Canvas from "canvas";
+
 export interface WallpaperData {
   createdAt: Date; // tags?
 }
@@ -23,6 +25,19 @@ export class Wallpaper {
       });
     });
   }
+
+  loadThumbnail() {
+    return new Promise<string | null>((resolve) => {
+      if (process.env.NODE_ENV !== "production") return resolve(this.id);
+      chrome.storage.local.get(`thumb-${this.id}`, (result: any) => {
+        if (result && typeof result[`thumb-${this.id}`] === "string") {
+          resolve(result[`thumb-${this.id}`]);
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  }
 }
 
 export function getAllIds() {
@@ -30,8 +45,8 @@ export function getAllIds() {
     if (process.env.NODE_ENV !== "production") {
       return resolve(
         Array.from(
-          { length: 5 },
-          (v, i) => `https://picsum.photos/${(8 + i) * 100}/${(16 - i) * 100}`
+          { length: 100 },
+          (v, i) => `https://picsum.photos/${1600 + i}/${900 + i}` //${(8 + i) * 100}/${(16 - i) * 100}`
         )
       );
     }
@@ -103,15 +118,25 @@ export function add(file: File) {
         let data: any = {};
         data["images"] = [...(await getAllIds()), id];
         data[`data-${id}`] = { createdAt: new Date() } as WallpaperData;
-        // data[`thumbnail-${id}`] = "stuff";
         data[`image-${id}`] = reader.result;
-        // Save data
-        chrome.storage.local.set(data, () => {
-          console.log(chrome.runtime.lastError);
-          console.log("saved:");
-          console.info(data);
-          resolve(new Wallpaper(id, data[`data-${id}`]));
-        });
+        // Compress for thumbnails
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = reader.result;
+        img.onload = () => {
+          const size = Math.min(img.width, img.height);
+          const canvas = Canvas.createCanvas((img.width * 128) / size, (img.height * 128) / size);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, (img.width * 128) / size, (img.height * 128) / size);
+          data[`thumb-${id}`] = canvas.toDataURL("image/jpeg", 0.5);
+          // Save data
+          chrome.storage.local.set(data, () => {
+            console.log(chrome.runtime.lastError);
+            console.log("saved:");
+            console.info(data);
+            resolve(new Wallpaper(id, data[`data-${id}`]));
+          });
+        };
       } else resolve(null);
     };
     reader.readAsDataURL(file);

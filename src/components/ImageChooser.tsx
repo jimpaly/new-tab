@@ -10,20 +10,33 @@ interface ChooserProps {
 }
 interface ChooserState {
   images: DB.Wallpaper[];
+  loadRange: {
+    min: number;
+    max: number;
+  };
 }
 
 export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState> {
   chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
+  scrollElement: React.RefObject<HTMLDivElement> = React.createRef();
 
   constructor(props: ChooserProps) {
     super(props);
     this.state = {
       images: [],
+      loadRange: {
+        min: 0,
+        max: 9,
+      },
     };
   }
 
   async componentDidMount() {
-    console.log(await DB.getAllIds());
+    // if (this.scrollElement.current)
+    //   this.scrollElement.current.onscroll = (options) => {
+    //     console.log(options);
+    //     console.log(this.scrollElement.current?.scrollHeight);
+    //   };
     this.setState({
       images: await DB.getMany(...(await DB.getAllIds())),
     });
@@ -98,13 +111,33 @@ export class ImageChooser extends React.PureComponent<ChooserProps, ChooserState
     return lastWallpaper;
   }
 
+  loadUnload(scrollPos: number) {
+    const first = Math.floor(scrollPos / 5) * 5;
+    if (first - 5 === this.state.loadRange.min && first + 9 === this.state.loadRange.max) return;
+    this.setState({
+      loadRange: {
+        min: first - 5,
+        max: first + 9,
+      },
+    });
+  }
+
   render() {
     return (
       <div className="v-list">
-        <div className="h-list" style={{ gap: "10px" }}>
+        <div
+          className="h-list"
+          style={{ gap: "10px", paddingBottom: "3px" }}
+          ref={this.scrollElement}
+          onScroll={(stuff) => this.loadUnload(Math.floor(stuff.currentTarget.scrollLeft / 110))}
+        >
           {this.state.images.map((image, idx) => (
             <React.Suspense fallback={<div>Loading...</div>} key={idx}>
-              <ImageCard image={image} onClick={() => this.props.setBackground(image)} />
+              <ImageCard
+                image={image}
+                loaded={this.state.loadRange.min <= idx && this.state.loadRange.max >= idx}
+                onClick={() => this.props.setBackground(image)}
+              />
             </React.Suspense>
           ))}
         </div>
