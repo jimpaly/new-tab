@@ -20,8 +20,7 @@ export class Clock extends React.PureComponent<ClockProps, ClockState> {
   componentDidMount() {
     this.interval = setInterval(() => {
       const newTime = new Date();
-      if (newTime.getMinutes() !== this.state.time.getMinutes())
-        this.props.updateBackground();
+      if (newTime.getMinutes() !== this.state.time.getMinutes()) this.props.updateBackground();
       this.setState({
         time: newTime,
       });
@@ -31,7 +30,7 @@ export class Clock extends React.PureComponent<ClockProps, ClockState> {
     if (this.interval) clearInterval(this.interval);
   }
   render() {
-    return <p className="Clock">{dateToString(this.state.time)}</p>;
+    return <div className="clock">{dateToString(this.state.time)}</div>;
   }
 }
 

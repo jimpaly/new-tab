@@ -1,8 +1,7 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: black; /* TODO: change background color based on dark/light mode? */
@@ -11,78 +10,243 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-.App {
+hr {
+  width: 30%;
+  height: 0px;
+  opacity: 0.5;
+  border-style: dashed;
+  border-width: 0px 3px 2px 0px;
+  border-color: green;
+}
+
+svg {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  stroke-linejoin: round;
+  stroke-miterlimit: 2;
+}
+
+.danger-button,
+.styled-button {
+  border-radius: 1000px;
+  font-size: 14px;
   text-align: center;
+  cursor: pointer;
+  padding: 5px 10px 5px 10px;
+  border: 2px solid;
+  background-color: white;
+  transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms,
+    opacity 300ms;
+}
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+}
+.danger-button:disabled:hover,
+.styled-button {
+  border-color: rgb(54, 224, 54);
+}
+.styled-button:disabled:hover,
+.danger-button {
+  border-color: red;
+}
+.styled-button:hover {
+  background-color: lightgreen;
+  border-color: green;
+}
+.danger-button:hover {
+  background-color: lightpink;
+  border-color: brown;
+}
+.styled-button:active {
+  background-color: green;
+  border-color: green;
+  transition: background-color 100ms, border-color 100ms;
+}
+.danger-button:active {
+  background-color: brown;
+  border-color: brown;
+  transition: background-color 100ms, border-color 100ms;
+}
+.danger-button:disabled,
+.styled-button:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+.button:focus,
+.danger-button:focus,
+.styled-button:focus {
+  outline: none;
+}
+.styled-button.focus:focus {
+  border-color: green;
+  border-width: 5px;
+}
+.danger-button.focus:focus {
+  border-color: brown;
+}
+
+/* POSITIONING */
+
+/* TRANSITIONS */
+.settings > .panel.animate-in {
+  opacity: 1;
+  visibility: visible;
+  transition-property: opacity, visibility, transform;
+  transition-duration: 200ms, 200ms, 200ms;
+  transition-timing-function: linear, linear, ease-out;
+}
+.settings > .panel.animate-out {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-20px);
+  transition-property: opacity, visibility, transform;
+  transition-duration: 200ms, 200ms, 200ms;
+  transition-timing-function: linear, linear, ease-in;
+}
+.opacity {
+  fill-opacity: 0.5;
+  transition-property: fill-opacity;
+  transition-duration: 200ms;
+  transition-timing-function: linear;
+}
+.opacity:hover {
+  fill-opacity: 1;
+}
+.rotate-on {
+  transition: transform 200ms ease-in-out;
+  transform: rotate(45deg);
+}
+.rotate-off {
+  transition: transform 200ms ease-in-out;
+}
+.settings-toggle {
+  transition-property: fill-opacity, fill, filter, transform;
+  transition-duration: 200ms;
+  transition-timing-function: linear, linear, linear, ease-in-out;
+  fill-opacity: 0.5;
+  fill: white;
+  filter: drop-shadow(0 0 5px #000000a0);
+}
+button:hover > .settings-toggle,
+.settings-toggle:hover {
+  fill-opacity: 1;
+  transform: rotate(10deg);
+}
+button:hover > .settings-toggle.enabled,
+.settings-toggle.enabled:hover {
+  transform: rotate(35deg);
+}
+.settings-toggle.enabled {
+  fill: black;
+  transform: rotate(45deg);
+  filter: none;
+}
+
+/* LOOKS */
+.stadium {
+  border-radius: 10000px;
+}
+.round,
+.round1 {
+  border-radius: 20px;
+}
+.round2 {
+  border-radius: 15px;
+}
+.round3 {
+  border-radius: 10px;
+}
+
+/* LAYOUT */
+.list {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.bottom-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.left-align {
+  text-align: left;
+}
+
+/* Components */
+.panel {
+  background-color: #ffffffa0;
+  border: 10px solid transparent;
+  border-radius: 10px;
+}
+.v-list {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-shrink: 0;
+  overflow-y: auto;
+  gap: 5px;
+}
+.h-list {
+  display: flex;
+  flex-flow: row nowrap;
+  flex-shrink: 0;
+  overflow-x: auto;
+  gap: 5px;
+}
+.h-list::-webkit-scrollbar,
+.v-list::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.h-list::-webkit-scrollbar-thumb,
+.v-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 128, 0, 0.5);
+  border-radius: 5px;
+}
+.h-list::-webkit-scrollbar-thumb:hover,
+.v-list::-webkit-scrollbar-thumb:hover {
+  background: green;
+}
+.h-list.scroll-padding {
+  padding-bottom: 3px;
+  border-color: transparent;
+  border-width: 10px 10px 3px 10px;
+  border-style: solid;
+}
+.flex-item {
+  flex: 1 1 0;
+}
+.image {
+  background-size: cover;
+  background-position: center center;
+}
+
+/* Unique components (should I use ids?) */
+.background {
+  /* position: fixed; */
+  overflow: unset;
+  background-attachment: fixed;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  min-height: 100vh;
+  height: 100vh;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.settings > .panel {
+  width: 500px;
+  max-height: 800px;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  /* background-color: #282c34; */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.Clock {
+.clock {
   color: white;
   text-shadow: 0 0 10px black;
   font-size: 5vw;
   font-family: sans-serif;
   font-weight: lighter;
-  margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.ImageChooser {
-  position: absolute;
-  bottom: 0%;
-  left: 0%;
-}
-
-.Background {
-  /* position: fixed; */
-  overflow:unset;
-  background-attachment: fixed;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  min-height: 100vh;
 }
