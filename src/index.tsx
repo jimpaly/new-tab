@@ -17,7 +17,6 @@ export default class App extends React.PureComponent<{}, {}> {
           }}
         />
         <Settings
-          className="bottom-left"
           setBackground={(wallpaper: DB.Wallpaper) =>
             this.backgroundElement.current?.setImage(wallpaper)
           }

@@ -13,65 +13,98 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-button {
+svg {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  stroke-linejoin: round;
+  stroke-miterlimit: 2;
+}
+
+.danger-button,
+.styled-button {
+  font-size: 14px;
   cursor: pointer;
-  padding: 5px;
+  padding: 5px 10px 5px 10px;
   border: 2px solid;
+  background-color: white;
   transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms,
     opacity 300ms;
 }
-button.danger:disabled:hover,
-button {
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+.danger-button:disabled:hover,
+.styled-button {
   border-color: rgb(54, 224, 54);
 }
-button:disabled:hover,
-button.danger {
+.styled-button:disabled:hover,
+.danger-button {
   border-color: red;
 }
-button:hover {
+.styled-button:hover {
   background-color: lightgreen;
   border-color: green;
 }
-button.danger:hover {
+.danger-button:hover {
   background-color: lightpink;
   border-color: brown;
 }
-button:active {
+.styled-button:active {
   background-color: green;
   border-color: green;
   transition: background-color 100ms, border-color 100ms;
 }
-button.danger:active {
+.danger-button:active {
   background-color: brown;
   border-color: brown;
 }
-button:disabled {
+.styled-button:disabled {
   cursor: default;
   opacity: 0.5;
 }
-button:focus {
+.button:focus,
+.danger-button:focus,
+.styled-button:focus {
   outline: none;
 }
-.focus-button:focus {
+.styled-button.focus:focus {
   border-color: green;
   border-width: 5px;
 }
-.focus-button.red:focus {
+.danger-button.focus:focus {
   border-color: brown;
+}
+.button > svg {
+  fill: white;
+
+  fill-opacity: 0.5;
+  transition-property: fill, fill-opacity;
+  transition-duration: 200ms;
+  transition-timing-function: linear;
+}
+.button:hover > svg {
+  fill-opacity: 1;
 }
 
 /* POSITIONING */
 
 /* TRANSITIONS */
-.fade-out {
-  opacity: 0;
-  visibility: hidden;
-  transition: visibility 200ms linear, opacity 200ms linear;
-}
-.fade-in {
+.settings > .panel.animate-in {
   opacity: 1;
   visibility: visible;
-  transition: opacity 200ms linear;
+  transition-property: opacity, visibility, transform;
+  transition-duration: 200ms, 200ms, 200ms;
+  transition-timing-function: linear, linear, ease-out;
+}
+.settings > .panel.animate-out {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-20px);
+  transition-property: opacity, visibility, transform;
+  transition-duration: 200ms, 200ms, 200ms;
+  transition-timing-function: linear, linear, ease-in;
 }
 
 /* LOOKS */
@@ -96,8 +129,8 @@ button:focus {
 }
 .bottom-left {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: 0;
+  left: 0;
 }
 .left-align {
   text-align: left;
@@ -107,7 +140,6 @@ button:focus {
 .panel {
   background-color: #ffffffa0;
   padding: 10px;
-  margin: 5px;
   border-radius: 10px;
 }
 .v-list {
@@ -153,8 +185,9 @@ button:focus {
   background-size: cover;
   height: 100vh;
 }
-.settings {
+.settings > .panel {
   max-width: 500px;
+  max-height: 800px;
 }
 .clock {
   color: white;

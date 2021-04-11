@@ -24,7 +24,7 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
   return (
     <div className="v-list">
       <button
-        className={`image focus-button`}
+        className={"image focus styled-button"}
         disabled={!enabled}
         style={{
           backgroundImage: thumbnail ? `url("${thumbnail}")` : "",
@@ -36,11 +36,11 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
       >
         {thumbnail ? "" : "loading..."}
       </button>
-      <button className="stadium" onClick={() => props.image.download()}>
+      <button className="stadium styled-button" onClick={() => props.image.download()}>
         download
       </button>
       <button
-        className="stadium"
+        className="stadium styled-button"
         onClick={() => {
           props.image.enabled = !props.image.enabled;
           props.image.saveData();
@@ -50,7 +50,7 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
         {props.image.enabled ? "disable" : "enable"}
       </button>
       <button
-        className="stadium danger"
+        className="stadium danger-button"
         onClick={async () => {
           const download = window.confirm(oneLine`
             Before deleting this image forever, 

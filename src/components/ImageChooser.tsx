@@ -125,16 +125,25 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
           // </React.Suspense>
         ))}
       </div>
-      <input
-        multiple
-        type="file"
-        ref={chooserElement}
-        onChange={async () => {
-          if (!chooserElement.current?.files?.length) return;
-          const bg = await addBackgrounds(Array.from(chooserElement.current.files));
-          if (bg) props.setBackground(bg);
-        }}
-      />
+      <div>
+        <label htmlFor="upload">
+          <button className="stadium styled-button" style={{ pointerEvents: "painted" }}>
+            Add Wallpapers
+          </button>
+        </label>
+        <input
+          id="upload"
+          multiple
+          type="file"
+          ref={chooserElement}
+          style={{ display: "none" }}
+          onChange={async () => {
+            if (!chooserElement.current?.files?.length) return;
+            const bg = await addBackgrounds(Array.from(chooserElement.current.files));
+            if (bg) props.setBackground(bg);
+          }}
+        />
+      </div>
     </div>
   );
 };

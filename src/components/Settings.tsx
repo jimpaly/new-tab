@@ -1,39 +1,46 @@
 import * as React from "react";
 import { ImageChooser } from "./ImageChooser";
 import * as DB from "../wallpaper-db";
+import { gears } from "../svg.jsx";
 
 interface SettingsProps {
   className?: string;
   setBackground?: (url: DB.Wallpaper) => void;
 }
-interface SettingsState {
-  isShowing: boolean;
-}
 
-export class Settings extends React.PureComponent<SettingsProps, SettingsState> {
-  constructor(props: SettingsProps) {
-    super(props);
-    this.state = {
-      isShowing: false,
-    };
-  }
-  render() {
-    return (
-      <div className={`settings left-align ${this.props.className ?? ""}`}>
-        <div className={`panel ${this.state.isShowing ? "fade-in" : "fade-out"}`}>
-          <ImageChooser setBackground={this.props.setBackground ?? (() => {})} />
-        </div>
+export const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
+  const [visible, setVisible] = React.useState<boolean>(false);
+
+  return (
+    <div
+      className={`settings bottom-left left-align ${props.className ?? ""}`}
+      style={{ margin: "10px" }}
+    >
+      <div
+        className={`panel bottom-left v-list ${visible ? "animate-in" : "animate-out"}`}
+        style={{ gap: "20px" }}
+      >
+        <ImageChooser setBackground={props.setBackground ?? (() => {})} />
+        <div style={{ height: "30px" }}></div>
+      </div>
+      <div className="panel bottom-left" style={{ backgroundColor: "transparent" }}>
         <button
-          className="stadium"
+          className="button"
           onClick={() => {
-            this.setState({
-              isShowing: !this.state.isShowing,
-            });
+            setVisible(!visible);
           }}
         >
-          settings
+          <svg
+            width="30px"
+            height="30px"
+            viewBox="0 0 2048 2048"
+            style={{ fill: visible ? "black" : "white" }}
+          >
+            <path d={gears} />
+          </svg>
+          {/* settings */}
         </button>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
