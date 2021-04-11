@@ -7,6 +7,7 @@ body {
   background-color: black; /* TODO: change background color based on dark/light mode? */
   min-height: 100vh;
   overscroll-behavior: none;
+  user-select: none;
 }
 
 code {
