@@ -1,6 +1,8 @@
 import * as Canvas from "canvas";
 import { oneLine } from "common-tags";
 
+const isTest = process.env.NODE_ENV !== "production";
+
 export interface WallpaperData {
   createdAt?: Date; // tags?
   enabled: boolean;
@@ -19,7 +21,7 @@ export class Wallpaper {
 
   loadImage() {
     return new Promise<string | null>((resolve) => {
-      if (process.env.NODE_ENV !== "production") return resolve(this.id);
+      if (isTest) return resolve(this.id);
       chrome.storage.local.get(`image-${this.id}`, (result: any) => {
         if (result && typeof result[`image-${this.id}`] === "string") {
           resolve(result[`image-${this.id}`]);
@@ -32,7 +34,7 @@ export class Wallpaper {
 
   loadThumbnail() {
     return new Promise<string | null>((resolve) => {
-      if (process.env.NODE_ENV !== "production") return resolve(this.id);
+      if (isTest) return resolve(this.id);
       chrome.storage.local.get(`thumb-${this.id}`, (result: any) => {
         if (result && typeof result[`thumb-${this.id}`] === "string") {
           resolve(result[`thumb-${this.id}`]);
@@ -44,7 +46,7 @@ export class Wallpaper {
   }
 
   async saveData() {
-    if (process.env.NODE_ENV !== "production") return;
+    if (isTest) return;
     let data: any = {};
     const meta: WallpaperData = {
       createdAt: this.createdAt ?? undefined,
@@ -56,24 +58,29 @@ export class Wallpaper {
     });
   }
 
-  async download(location = "") {
+  async download(location = "", saveAs = true) {
     let image = await this.loadImage();
     if (!image) return alert("Oops! Something went wrong while trying to load the image!");
     const extension = image.slice(image.indexOf("image/") + 6, image.indexOf(";"));
-    if (process.env.NODE_ENV !== "production")
+    if (isTest)
       return alert(oneLine`
         Can't actually download in development version, 
         but it should download wallpaper.${extension} with ${image}`);
-    chrome.downloads.download({
-      filename: `${location}wallpaper.${extension}`,
-      url: image,
-      saveAs: true,
+    return new Promise<void>((resolve) => {
+      chrome.downloads.download(
+        {
+          filename: `${location}wallpaper.${extension}`,
+          url: image ?? "",
+          saveAs: saveAs,
+        },
+        () => resolve()
+      );
     });
   }
 
   delete() {
     return new Promise<void>((resolve, reject) => {
-      if (process.env.NODE_ENV !== "production") reject("Not in production mode");
+      if (isTest) reject("Not in production mode");
       chrome.storage.local.remove(
         [`image-${this.id}`, `data-${this.id}`, `thumb-${this.id}`],
         async () => {
@@ -91,7 +98,7 @@ export class Wallpaper {
 
 export function getAllIds() {
   return new Promise<string[]>((resolve) => {
-    if (process.env.NODE_ENV !== "production") {
+    if (isTest) {
       return resolve(
         Array.from(
           { length: 100 },
@@ -111,15 +118,13 @@ export function getAllIds() {
 
 export async function getRandom() {
   const images = await (await getMany(await getAllIds())).filter((image) => image.enabled);
-  console.log(images);
   if (images.length > 0) return images[Math.floor(Math.random() * images.length)];
   else return null;
 }
 
 export function getMany(ids: string[]) {
   return new Promise<Wallpaper[]>((resolve) => {
-    if (process.env.NODE_ENV !== "production")
-      return resolve(ids.map((id) => new Wallpaper(id, {})));
+    if (isTest) return resolve(ids.map((id) => new Wallpaper(id, {})));
     chrome.storage.local.get(
       ids.map((id) => `data-${id}`),
       (result: any) => {
@@ -139,7 +144,7 @@ export function getMany(ids: string[]) {
 
 export function get(id: string) {
   return new Promise<Wallpaper | null>((resolve) => {
-    if (process.env.NODE_ENV !== "production") return resolve(null);
+    if (isTest) return resolve(null);
     chrome.storage.local.get(`data-${id}`, (result: any) => {
       if (result) {
         resolve(new Wallpaper(id, result[`data-${id}`]));
@@ -155,7 +160,7 @@ export function add(file: File) {
 
   // Read file with FileReader
   return new Promise<Wallpaper | "notImage" | "tooBig" | null>((resolve) => {
-    if (process.env.NODE_ENV !== "production") return resolve(null);
+    if (isTest) return resolve(null);
     // Error if file isn't an image
     if (!file.type.startsWith("image/")) return resolve("notImage");
     // Error if file is too large (>10MB)
@@ -189,5 +194,24 @@ export function add(file: File) {
       } else resolve(null);
     };
     reader.readAsDataURL(file);
+  });
+}
+//Excluding this for now because it causes a lot of lag and memory issues
+//TODO: use zip, or maybe chrome api to download more slowly
+// export async function downloadMany(images: Wallpaper[]) {
+//   for (const image of images) {
+//     await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
+//     await image.download("wallpapers/", false);
+//   }
+//   alert("Done downloading everything!");
+// }
+
+export function deleteAll() {
+  return new Promise<void>((resolve) => {
+    if (isTest) resolve();
+    chrome.storage.local.clear(() => {
+      if (chrome.runtime.lastError) console.log(chrome.runtime.lastError);
+      resolve();
+    });
   });
 }

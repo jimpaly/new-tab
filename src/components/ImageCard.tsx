@@ -6,12 +6,17 @@ interface ImageCardProps {
   image: DB.Wallpaper;
   loaded: boolean;
   onClick?: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
+  onEnabledUpdate?: () => void;
 }
 
 export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
   const [enabled, setEnabled] = React.useState<boolean>(props.image.enabled);
+
+  React.useEffect(() => {
+    setEnabled(props.image.enabled);
+  }, [props.image.enabled]);
 
   React.useEffect(() => {
     if (props.loaded)
@@ -45,6 +50,7 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
           props.image.enabled = !props.image.enabled;
           props.image.saveData();
           setEnabled(props.image.enabled);
+          if (props.onEnabledUpdate) props.onEnabledUpdate();
         }}
       >
         {props.image.enabled ? "disable" : "enable"}
@@ -57,7 +63,7 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
             would you like to download it, just in case?`);
           if (download) await props.image.download();
           props.image.delete();
-          props.onDelete();
+          if (props.onDelete) props.onDelete();
         }}
       >
         delete

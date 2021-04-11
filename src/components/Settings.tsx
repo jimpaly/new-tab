@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ImageChooser } from "./ImageChooser";
 import * as DB from "../wallpaper-db";
-import { gears } from "../svg.jsx";
+import { dropshadow, gears } from "../svg.jsx";
 
 interface SettingsProps {
   className?: string;
@@ -34,7 +34,7 @@ export const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
             width="30px"
             height="30px"
             viewBox="0 0 2048 2048"
-            style={{ fill: visible ? "black" : "white" }}
+            className={`${visible ? "enabled" : ""} settings-toggle`}
           >
             <path d={gears} />
           </svg>
