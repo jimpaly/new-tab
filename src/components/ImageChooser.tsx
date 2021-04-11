@@ -1,25 +1,25 @@
 import * as React from "react";
 import { oneLine, stripIndents } from "common-tags";
-import * as DB from "../wallpaper-db";
+import Wallpaper from "../database/wallpaper-db";
 import "../index.css";
 import ImageCard from "./ImageCard";
 // const ImageCard = React.lazy(() => import("./ImageCard"));
 
 interface ChooserProps {
-  setBackground(url: DB.Wallpaper): void;
+  setBackground(wallpaper: Wallpaper): void;
 }
 
 export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
   let chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
-  const [images, setImages] = React.useState<DB.Wallpaper[]>([]);
+  const [images, setImages] = React.useState<Wallpaper[]>([]);
   const [loadRange, setLoadRange] = React.useState<{ min: Number; max: number }>({
     min: 0,
     max: 9,
   });
   const [allEnabled, setAllEnabled] = React.useState<boolean>(false);
   React.useEffect(() => {
-    DB.getAllIds().then(async (ids) => {
-      let imgs = await DB.getMany(ids);
+    Wallpaper.getAllIds().then(async (ids) => {
+      let imgs = await Wallpaper.getMany(ids);
       setImages(imgs);
       setAllEnabled(imgs.find((image) => !image.enabled) === undefined);
     });
@@ -38,9 +38,9 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
 
     let imgs = images.slice();
 
-    let lastWallpaper: DB.Wallpaper | null = null;
+    let lastWallpaper: Wallpaper | null = null;
     for (const file of files) {
-      const newWallpaper = await DB.add(file);
+      const newWallpaper = await Wallpaper.add(file);
       // Error if file isn't an image
       if (newWallpaper === "notImage") errors.notImage.push(file);
       // Error if file is too large (>10MB)
@@ -68,7 +68,7 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
       }
       if (confirm) {
         for (const file of errors.tooBig) {
-          const newWallpaper = await DB.add(file);
+          const newWallpaper = await Wallpaper.add(file);
           if (newWallpaper && newWallpaper !== "notImage" && newWallpaper !== "tooBig")
             imgs.push(newWallpaper);
           setImages(imgs.slice());
@@ -189,7 +189,7 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
               This can't be undone!`);
             if (!confirm) return;
             alert("Deleting images... This might take a moment.");
-            await DB.deleteAll();
+            await Wallpaper.deleteAll();
             setImages([]);
           }}
         >

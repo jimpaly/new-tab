@@ -2,29 +2,23 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { Background, Clock, Settings } from "./components";
-import * as DB from "./wallpaper-db";
+import { Background, Clock, SettingsPanel } from "./components";
+import Wallpaper from "./database/wallpaper-db";
 
-export default class App extends React.PureComponent<{}, {}> {
-  backgroundElement: React.RefObject<Background> = React.createRef();
-  render() {
-    return (
-      <div>
-        <Background ref={this.backgroundElement} />
-        <Clock
-          updateBackground={async () => {
-            this.backgroundElement.current?.setImage();
-          }}
-        />
-        <Settings
-          setBackground={(wallpaper: DB.Wallpaper) =>
-            this.backgroundElement.current?.setImage(wallpaper)
-          }
-        />
-      </div>
-    );
-  }
-}
+export const App: React.FC<{}> = () => {
+  const [wallpaper, setWallpaper] = React.useState<Wallpaper | null>(null);
+  return (
+    <div>
+      <Background wallpaper={wallpaper} />
+      <Clock
+        updateBackground={async () => {
+          setWallpaper(await Wallpaper.getRandom());
+        }}
+      />
+      <SettingsPanel setBackground={(wallpaper: Wallpaper) => setWallpaper(wallpaper)} />
+    </div>
+  );
+};
 
 ReactDOM.render(
   <React.StrictMode>

@@ -4,24 +4,16 @@ interface ClockProps {
   updateBackground(): void;
 }
 
-interface ClockState {
-  time: Date;
-}
-
-export const Clock: React.FC<ClockProps> = (props: ClockProps) => {
+export const Clock: React.FC<ClockProps> = ({ updateBackground }) => {
   const [time, setTime] = React.useState<Date>(new Date());
-  let interval: NodeJS.Timeout | null = null;
 
   React.useEffect(() => {
-    interval = setInterval(() => {
+    setTimeout(() => {
       const newTime = new Date();
-      if (newTime.getMinutes() !== time.getMinutes()) props.updateBackground();
+      if (shouldUpdateBackground(time, newTime)) updateBackground();
       setTime(newTime);
     }, 100);
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, []);
+  }, [time, updateBackground]);
 
   return <div className="clock">{dateToString(time)}</div>;
 };
@@ -34,4 +26,9 @@ function dateToString(date: Date) {
   // return `${hr}:${"0".repeat(2 - min.length)}${min}:${"0".repeat(
   //   2 - sec.length
   // )}${sec}`;
+}
+
+function shouldUpdateBackground(oldTime: Date, newTime: Date) {
+  if (newTime.getMinutes() !== oldTime.getMinutes()) return true;
+  return false;
 }

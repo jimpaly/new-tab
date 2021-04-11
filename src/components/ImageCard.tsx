@@ -1,9 +1,9 @@
 import * as React from "react";
-import * as DB from "../wallpaper-db";
+import Wallpaper from "../database/wallpaper-db";
 import { oneLine } from "common-tags";
 
 interface ImageCardProps {
-  image: DB.Wallpaper;
+  image: Wallpaper;
   loaded: boolean;
   onClick?: () => void;
   onDelete?: () => void;

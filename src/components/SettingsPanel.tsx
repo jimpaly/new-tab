@@ -1,14 +1,14 @@
 import * as React from "react";
 import { ImageChooser } from "./ImageChooser";
-import * as DB from "../wallpaper-db";
-import { dropshadow, gears } from "../svg.jsx";
+import Wallpaper from "../database/wallpaper-db";
+import { gears } from "../svg.jsx";
 
 interface SettingsProps {
   className?: string;
-  setBackground?: (url: DB.Wallpaper) => void;
+  setBackground?: (wallpaper: Wallpaper) => void;
 }
 
-export const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
+export const SettingsPanel: React.FC<SettingsProps> = (props: SettingsProps) => {
   const [visible, setVisible] = React.useState<boolean>(false);
 
   return (
@@ -21,6 +21,8 @@ export const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
         style={{ gap: "20px" }}
       >
         <ImageChooser setBackground={props.setBackground ?? (() => {})} />
+        <hr />
+
         <div style={{ height: "30px" }}></div>
       </div>
       <div className="panel bottom-left" style={{ backgroundColor: "transparent" }}>
@@ -38,7 +40,6 @@ export const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
           >
             <path d={gears} />
           </svg>
-          {/* settings */}
         </button>
       </div>
     </div>
