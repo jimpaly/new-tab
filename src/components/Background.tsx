@@ -9,13 +9,11 @@ export const Background: React.FC<BackgroundProps> = ({ wallpaper }) => {
   const [url, setURL] = React.useState<string>("/default.svg");
 
   React.useEffect(() => {
-    console.log("bye");
-    if (!wallpaper)
-      Wallpaper.getRandom().then(async (newWallpaper) => {
-        if (!newWallpaper) return;
-        setURL((await newWallpaper.loadImage()) ?? "/default.svg");
+    if (wallpaper) wallpaper.loadImage().then((newURL) => setURL((url) => newURL ?? url));
+    else
+      Wallpaper.getRandom().then(async (wallpaper) => {
+        wallpaper?.loadImage().then((newURL) => setURL((url) => newURL ?? url));
       });
-    else wallpaper.loadImage().then((wallpaperURL) => setURL(wallpaperURL ?? "/default.svg"));
   }, [wallpaper]);
 
   return <div className="background" style={{ backgroundImage: `url("${url}")` }}></div>;

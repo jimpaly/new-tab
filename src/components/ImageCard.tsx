@@ -3,31 +3,37 @@ import Wallpaper from "../database/wallpaper-db";
 import { oneLine } from "common-tags";
 
 interface ImageCardProps {
-  image: Wallpaper;
+  wallpaper: Wallpaper;
   loaded: boolean;
   onClick?: () => void;
   onDelete?: () => void;
   onEnabledUpdate?: () => void;
 }
 
-export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
+export const ImageCard: React.FC<ImageCardProps> = ({
+  wallpaper,
+  loaded,
+  onClick,
+  onDelete,
+  onEnabledUpdate,
+}) => {
   const [thumbnail, setThumbnail] = React.useState<string | null>(null);
-  const [enabled, setEnabled] = React.useState<boolean>(props.image.enabled);
+  const [enabled, setEnabled] = React.useState<boolean>(wallpaper.enabled);
 
   React.useEffect(() => {
-    setEnabled(props.image.enabled);
-  }, [props.image.enabled]);
+    setEnabled(wallpaper.enabled);
+  }, [wallpaper.enabled]);
 
   React.useEffect(() => {
-    if (props.loaded)
-      props.image.loadThumbnail().then((image) => {
+    if (loaded)
+      wallpaper.loadThumbnail().then((image) => {
         if (image) setThumbnail(image);
       });
-    if (!props.loaded) setThumbnail(null);
-  }, [props.loaded, props.image]);
+    if (!loaded) setThumbnail(null);
+  }, [loaded, wallpaper]);
 
   return (
-    <div className="v-list">
+    <div className="v-list" style={{ gap: "5px" }}>
       <button
         className={"image focus styled-button"}
         disabled={!enabled}
@@ -37,23 +43,23 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
           height: "100px",
           borderRadius: "10px",
         }}
-        onClick={thumbnail && enabled ? props.onClick : () => {}}
+        onClick={thumbnail && enabled ? onClick : () => {}}
       >
         {thumbnail ? "" : "loading..."}
       </button>
-      <button className="stadium styled-button" onClick={() => props.image.download()}>
+      <button className="stadium styled-button" onClick={() => wallpaper.download()}>
         download
       </button>
       <button
         className="stadium styled-button"
         onClick={() => {
-          props.image.enabled = !props.image.enabled;
-          props.image.saveData();
-          setEnabled(props.image.enabled);
-          if (props.onEnabledUpdate) props.onEnabledUpdate();
+          wallpaper.enabled = !wallpaper.enabled;
+          wallpaper.saveData();
+          setEnabled(wallpaper.enabled);
+          if (onEnabledUpdate) onEnabledUpdate();
         }}
       >
-        {props.image.enabled ? "disable" : "enable"}
+        {wallpaper.enabled ? "disable" : "enable"}
       </button>
       <button
         className="stadium danger-button"
@@ -61,9 +67,9 @@ export const ImageCard: React.FC<ImageCardProps> = (props: ImageCardProps) => {
           const download = window.confirm(oneLine`
             Before deleting this image forever, 
             would you like to download it, just in case?`);
-          if (download) await props.image.download();
-          props.image.delete();
-          if (props.onDelete) props.onDelete();
+          if (download) await wallpaper.download();
+          wallpaper.delete();
+          if (onDelete) onDelete();
         }}
       >
         delete

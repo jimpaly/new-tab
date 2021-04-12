@@ -8,12 +8,20 @@ export const Clock: React.FC<ClockProps> = ({ updateBackground }) => {
   const [time, setTime] = React.useState<Date>(new Date());
 
   React.useEffect(() => {
-    setTimeout(() => {
-      const newTime = new Date();
-      if (shouldUpdateBackground(time, newTime)) updateBackground();
-      setTime(newTime);
+    console.log("refreshed");
+    const interval = setInterval(() => {
+      setTime((time) => {
+        const newTime = new Date();
+        if (shouldUpdateBackground(time, newTime)) {
+          updateBackground();
+          console.log(`update background from clock at time ${newTime}`);
+        }
+        return newTime;
+      });
     }, 100);
-  }, [time, updateBackground]);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <div className="clock">{dateToString(time)}</div>;
 };

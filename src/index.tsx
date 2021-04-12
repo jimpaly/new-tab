@@ -10,11 +10,7 @@ export const App: React.FC<{}> = () => {
   return (
     <div>
       <Background wallpaper={wallpaper} />
-      <Clock
-        updateBackground={async () => {
-          setWallpaper(await Wallpaper.getRandom());
-        }}
-      />
+      <Clock updateBackground={async () => setWallpaper(await Wallpaper.getRandom())} />
       <SettingsPanel setBackground={(wallpaper: Wallpaper) => setWallpaper(wallpaper)} />
     </div>
   );

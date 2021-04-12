@@ -189,7 +189,7 @@ button:hover > .settings-toggle.enabled,
   flex-flow: column nowrap;
   flex-shrink: 0;
   overflow-y: auto;
-  gap: 5px;
+  gap: 20px;
 }
 .h-list {
   display: flex;
@@ -239,6 +239,7 @@ button:hover > .settings-toggle.enabled,
 .settings > .panel {
   width: 500px;
   max-height: 800px;
+  margin: 10px;
 }
 .clock {
   color: white;

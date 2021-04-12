@@ -8,21 +8,13 @@ interface SettingsProps {
   setBackground?: (wallpaper: Wallpaper) => void;
 }
 
-export const SettingsPanel: React.FC<SettingsProps> = (props: SettingsProps) => {
+export const SettingsPanel: React.FC<SettingsProps> = ({ className, setBackground }) => {
   const [visible, setVisible] = React.useState<boolean>(false);
 
   return (
-    <div
-      className={`settings bottom-left left-align ${props.className ?? ""}`}
-      style={{ margin: "10px" }}
-    >
-      <div
-        className={`panel bottom-left v-list ${visible ? "animate-in" : "animate-out"}`}
-        style={{ gap: "20px" }}
-      >
-        <ImageChooser setBackground={props.setBackground ?? (() => {})} />
-        <hr />
-
+    <div className={`settings bottom-left left-align ${className ?? ""}`}>
+      <div className={`panel bottom-left v-list ${visible ? "animate-in" : "animate-out"}`}>
+        <ImageChooser setBackground={setBackground ?? (() => {})} />
         <div style={{ height: "30px" }}></div>
       </div>
       <div className="panel bottom-left" style={{ backgroundColor: "transparent" }}>

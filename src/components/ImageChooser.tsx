@@ -9,7 +9,7 @@ interface ChooserProps {
   setBackground(wallpaper: Wallpaper): void;
 }
 
-export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
+export const ImageChooser: React.FC<ChooserProps> = ({ setBackground }) => {
   let chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
   const [images, setImages] = React.useState<Wallpaper[]>([]);
   const [loadRange, setLoadRange] = React.useState<{ min: Number; max: number }>({
@@ -17,6 +17,7 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
     max: 9,
   });
   const [allEnabled, setAllEnabled] = React.useState<boolean>(false);
+
   React.useEffect(() => {
     Wallpaper.getAllIds().then(async (ids) => {
       let imgs = await Wallpaper.getMany(ids);
@@ -124,9 +125,9 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
             // <React.Suspense fallback={<div>Loading...</div>} key={idx}>
             <ImageCard
               key={image.id}
-              image={image}
+              wallpaper={image}
               loaded={loadRange.min <= idx && loadRange.max >= idx}
-              onClick={() => props.setBackground(image)}
+              onClick={() => setBackground(image)}
               onDelete={() => {
                 let imgs = images.slice();
                 imgs.splice(idx, 1);
@@ -153,7 +154,7 @@ export const ImageChooser: React.FC<ChooserProps> = (props: ChooserProps) => {
           onChange={async () => {
             if (!chooserElement.current?.files?.length) return;
             const bg = await addBackgrounds(Array.from(chooserElement.current.files));
-            if (bg) props.setBackground(bg);
+            if (bg) setBackground(bg);
           }}
         />
         {/* <button className="styled-button" onClick={() => DB.downloadMany(images)}>
