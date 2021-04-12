@@ -4,10 +4,24 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #2e2e2e; /*TODO: change background color based on dark/light mode? */
+  background-color: #e2e2e2; /*TODO: change background color based on dark/light mode? */
   min-height: 100vh;
   overscroll-behavior: none;
   user-select: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  body,
+  .background {
+    background-color: #2e2e2e;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body,
+  .background {
+    background-color: #e2e2e2;
+  }
 }
 
 code {

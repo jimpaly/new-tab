@@ -30,7 +30,11 @@ export const Background: React.FC<BackgroundProps> = ({ wallpaper }) => {
         <div
           key={wallpaper.id}
           className="background"
-          style={{ backgroundImage: `url("${wallpaper.url}")`, opacity: idx === 0 ? 1 : 0 }}
+          style={{
+            backgroundImage: `url("${wallpaper.url}")`,
+            opacity: idx === 0 ? 1 : 0,
+            transitionDuration: wallpaper.id ? "2s" : "300ms",
+          }}
         ></div>
       ))}
     </div>
