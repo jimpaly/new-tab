@@ -4,7 +4,7 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: black; /* TODO: change background color based on dark/light mode? */
+  background-color: #2e2e2e; /*TODO: change background color based on dark/light mode? */
   min-height: 100vh;
   overscroll-behavior: none;
   user-select: none;
@@ -233,7 +233,9 @@ button:hover > .settings-toggle.enabled,
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+  position: absolute;
   height: 100vh;
+  width: 100vw;
   transition: opacity 2s ease-in-out;
 }
 .settings > .panel {

@@ -19,6 +19,13 @@ export default class Wallpaper {
     this.enabled = data.enabled ?? true;
   }
 
+  clone() {
+    return new Wallpaper(this.id, {
+      createdAt: this.createdAt ?? undefined,
+      enabled: this.enabled,
+    });
+  }
+
   loadImage() {
     return new Promise<string | null>((resolve) => {
       if (isTest) return resolve(this.id);

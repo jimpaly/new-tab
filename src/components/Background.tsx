@@ -6,63 +6,46 @@ interface BackgroundProps {
 }
 
 export const Background: React.FC<BackgroundProps> = ({ wallpaper }) => {
-  const [url, setURL] = React.useState<string>("/default.svg");
-  const [url2, setURL2] = React.useState<string>("");
+  const [wallpapers, setWallpapers] = React.useState<{ id: string; url: string }[]>([
+    { id: "", url: "" },
+  ]);
 
   React.useEffect(() => {
     call(wallpaper);
     async function call(wallpaper: Wallpaper | null) {
       if (!wallpaper) wallpaper = await Wallpaper.getRandom();
-      if (!wallpaper) return;
-      const newURL = await wallpaper.loadImage();
+      const newURL = wallpaper ? await wallpaper.loadImage() : "/default.svg";
       if (!newURL) return;
-      setURL2(newURL);
-      setTimeout(() => setURL(newURL), 2100);
-      setTimeout(() => setURL2(""), 2200);
+      setWallpapers((wallpapers) => [{ id: "" + Date.now(), url: newURL }].concat(wallpapers));
+      setTimeout(() => setWallpapers((wallpapers) => wallpapers.slice(0, -1)), 3000);
     }
-    // if (wallpaper) wallpaper.loadImage().then((newURL) => setURL((url) => newURL ?? url));
-    // else
-    //   Wallpaper.getRandom().then(async (wallpaper) => {
-    //     wallpaper?.loadImage().then((newURL) => setURL((url) => newURL ?? url));
-    //   });
   }, [wallpaper]);
 
   // return <img className="background" src={url} alt="background" />;
 
   return (
-    <div className="background" style={{ backgroundImage: `url("${url}")` }}>
-      <div
-        className="background"
-        style={{ backgroundImage: `url("${url2}")`, opacity: url2 !== "" ? 1 : 0 }}
-      ></div>
+    <div>
+      {wallpapers.map((wallpaper, idx) => (
+        // <SingleBackground key={wallpaper.id} url={wallpaper.url} />
+        <div
+          key={wallpaper.id}
+          className="background"
+          style={{ backgroundImage: `url("${wallpaper.url}")`, opacity: idx === 0 ? 1 : 0 }}
+        ></div>
+      ))}
     </div>
   );
 };
 
-// export class Background extends React.PureComponent<{}, BackgroundState> {
-//   constructor(props: {}) {
-//     super(props);
-//     this.state = {
-//       url: "/default.svg",
-//     };
-//   }
-//   async componentDidMount() {
-//     this.setImage();
-//   }
-//   async setImage(wallpaper?: Wallpaper) {
-//     if (!wallpaper) wallpaper = (await Wallpaper.getRandom()) ?? undefined;
-//     if (wallpaper) {
-//       const url = await wallpaper.loadImage();
-//       if (url) {
-//         this.setState({ url: url });
-//       }
-//     }
-//   }
-//   render() {
-//     return (
-//       <div className="background" style={{ backgroundImage: `url("${this.state.url}")` }}>
-//         {/* <img src={`${this.state.url}`} alt="background"/> */}
-//       </div>
-//     );
-//   }
-// }
+const SingleBackground: React.FC<{ key: string; url: string }> = ({ url }) => {
+  const [visible, setVisible] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    setTimeout(() => setVisible(true), 10);
+  }, []);
+  return (
+    <div
+      className="background"
+      style={{ backgroundImage: `url("${url}")`, opacity: visible ? 1 : 0 }}
+    ></div>
+  );
+};

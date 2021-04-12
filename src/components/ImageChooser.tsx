@@ -10,7 +10,6 @@ interface ChooserProps {
 }
 
 export const ImageChooser: React.FC<ChooserProps> = ({ setBackground }) => {
-  let chooserElement: React.RefObject<HTMLInputElement> = React.createRef();
   const [images, setImages] = React.useState<Wallpaper[]>([]);
   const [loadRange, setLoadRange] = React.useState<{ min: Number; max: number }>({
     min: 0,
@@ -149,11 +148,10 @@ export const ImageChooser: React.FC<ChooserProps> = ({ setBackground }) => {
           id="upload"
           multiple
           type="file"
-          ref={chooserElement}
           style={{ display: "none" }}
-          onChange={async () => {
-            if (!chooserElement.current?.files?.length) return;
-            const bg = await addBackgrounds(Array.from(chooserElement.current.files));
+          onChange={async (event) => {
+            if (!event.target.files?.length) return;
+            const bg = await addBackgrounds(Array.from(event.target.files));
             if (bg) setBackground(bg);
           }}
         />
