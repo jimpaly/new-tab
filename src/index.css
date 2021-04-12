@@ -228,13 +228,13 @@ button:hover > .settings-toggle.enabled,
 
 /* Unique components (should I use ids?) */
 .background {
-  /* position: fixed; */
   overflow: unset;
   background-attachment: fixed;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   height: 100vh;
+  transition: opacity 2s ease-in-out;
 }
 .settings > .panel {
   width: 500px;

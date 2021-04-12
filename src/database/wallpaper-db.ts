@@ -101,7 +101,7 @@ export default class Wallpaper {
         return resolve(
           Array.from(
             { length: 100 },
-            (v, i) => `https://picsum.photos/${1600 + i}/${900 + i}` //${(8 + i) * 100}/${(16 - i) * 100}`
+            (v, i) => `https://picsum.photos/${800 + i}/${500 + i}` //${(8 + i) * 100}/${(16 - i) * 100}`
           )
         );
       }
