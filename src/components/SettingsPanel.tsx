@@ -19,7 +19,7 @@ export const SettingsPanel: React.FC<SettingsProps> = ({ className, setBackgroun
       </div>
       <div className="panel bottom-left" style={{ backgroundColor: "transparent" }}>
         <button
-          className="button"
+          className="unstyled-button"
           onClick={() => {
             setVisible(!visible);
           }}

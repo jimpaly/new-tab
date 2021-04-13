@@ -26,7 +26,6 @@ export const Background: React.FC<BackgroundProps> = ({ wallpaper }) => {
   return (
     <div>
       {wallpapers.map((wallpaper, idx) => (
-        // <SingleBackground key={wallpaper.id} url={wallpaper.url} />
         <div
           key={wallpaper.id}
           className="background"
@@ -38,18 +37,5 @@ export const Background: React.FC<BackgroundProps> = ({ wallpaper }) => {
         ></div>
       ))}
     </div>
-  );
-};
-
-const SingleBackground: React.FC<{ key: string; url: string }> = ({ url }) => {
-  const [visible, setVisible] = React.useState<boolean>(false);
-  React.useEffect(() => {
-    setTimeout(() => setVisible(true), 10);
-  }, []);
-  return (
-    <div
-      className="background"
-      style={{ backgroundImage: `url("${url}")`, opacity: visible ? 1 : 0 }}
-    ></div>
   );
 };

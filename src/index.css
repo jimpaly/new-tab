@@ -1,120 +1,153 @@
+/* GENERAL */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e2e2e2; /*TODO: change background color based on dark/light mode? */
+  background-color: var(--background);
   min-height: 100vh;
   overscroll-behavior: none;
   user-select: none;
+  color: var(--text);
 }
-
-@media (prefers-color-scheme: dark) {
-  body,
-  .background {
-    background-color: #2e2e2e;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  body,
-  .background {
-    background-color: #e2e2e2;
-  }
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-hr {
-  width: 30%;
-  height: 0px;
-  opacity: 0.5;
-  border-style: dashed;
-  border-width: 0px 3px 2px 0px;
-  border-color: green;
-}
-
 svg {
   fill-rule: evenodd;
   clip-rule: evenodd;
   stroke-linejoin: round;
   stroke-miterlimit: 2;
 }
-
-.danger-button,
-.styled-button {
-  border-radius: 1000px;
+p {
   font-size: 14px;
+}
+
+/* COLOR SCHEME */
+:root {
+  --green-rgb: 27, 179, 40;
+  --green: #1bb328;
+  --green-1: #80ff8a;
+  --green-2: #41d94c;
+  --green-3: #1bb328;
+  --green-4: #0d8017;
+  --red: #cc3529;
+  --red-1: #ff9580;
+  --red-2: #f25d49;
+  --red-3: #cc3529;
+  --red-4: #991b0f;
+  --text: #000000;
+  --text-1: #000000;
+  --text-2: #505050;
+  --text-3: #a0a0a0;
+  --text-4: #d0d0d0;
+  --background-rgb: 255, 255, 255;
+  --background: #ffffff;
+  --background-1: #ffffff;
+  --background-2: #eaeaea;
+  --background-3: #cecece;
+  --background-4: #b0b0b0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --green: #24b32f;
+    --green-1: #1f6624;
+    --green-2: #1f9928;
+    --green-3: #29cc35;
+    --green-4: #80ff8b;
+    --red: #cc3529;
+    --red-1: #802e26;
+    --red-2: #a62b21;
+    --red-3: #d92616;
+    --red-4: #ff8b80;
+    --text: #f0f0f0;
+    --text-1: #f0f0f0;
+    --text-2: #d0d0d0;
+    --text-3: #b0b0b0;
+    --text-4: #8a8a8a;
+    --background: #202020;
+    --background-1: #202020;
+    --background-2: #404040;
+    --background-3: #606060;
+    --background-4: #808080;
+    --background-rgb: 32, 32, 32;
+  }
+}
+@media (prefers-color-scheme: light) {
+}
+
+/* BUTTONS */
+
+.button,
+button {
+  font-size: 14px;
+  color: var(--text);
+  border-radius: 1000px;
+  outline: none;
+  border: var(--green) 2px solid;
+  background-color: var(--background);
   text-align: center;
+  padding: 5px 10px;
   cursor: pointer;
-  padding: 5px 10px 5px 10px;
-  border: 2px solid;
-  background-color: white;
-  transition: background-color 300ms ease-out, border-color 300ms ease-out, border-width 100ms,
-    opacity 300ms;
+  transition: all 300ms ease-in-out, border-width 100ms ease-in-out;
 }
-.button {
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  text-align: center;
+.button:hover,
+button:hover {
+  border-color: var(--green-4);
+  background-color: var(--green-1);
 }
-.danger-button:disabled:hover,
-.styled-button {
-  border-color: rgb(54, 224, 54);
+.button:active,
+button:active {
+  border-color: var(--green-4);
+  background-color: var(--green-2);
+  transform: scale(0.95, 0.95);
+  transition-duration: 100ms;
 }
-.styled-button:disabled:hover,
-.danger-button {
-  border-color: red;
+.button.focus:focus,
+button.focus:focus {
+  border-color: var(--green-3);
+  border-width: 5px;
 }
-.styled-button:hover {
-  background-color: lightgreen;
-  border-color: green;
-}
-.danger-button:hover {
-  background-color: lightpink;
-  border-color: brown;
-}
-.styled-button:active {
-  background-color: green;
-  border-color: green;
-  transition: background-color 100ms, border-color 100ms;
-}
-.danger-button:active {
-  background-color: brown;
-  border-color: brown;
-  transition: background-color 100ms, border-color 100ms;
-}
-.danger-button:disabled,
-.styled-button:disabled {
+.button:disabled,
+button:disabled {
   cursor: default;
   opacity: 0.3;
 }
-.button:focus,
-.danger-button:focus,
-.styled-button:focus {
-  outline: none;
-}
-.styled-button.focus:focus {
-  border-color: green;
-  border-width: 5px;
-}
-.danger-button.focus:focus {
-  border-color: brown;
+.button:disabled:hover,
+button:disabled:hover {
+  background-color: var(--background);
+  border-color: var(--red-3);
 }
 
-/* POSITIONING */
+.danger-button {
+  border-color: var(--red);
+}
+.danger-button:hover {
+  border-color: var(--red-4);
+  background-color: var(--red-1);
+}
+.danger-button:active {
+  border-color: var(--red-4);
+  background-color: var(--red-2);
+}
+.danger-button.focus:focus {
+  border-color: var(--red-3);
+}
+.danger-button:disabled:hover {
+  border-color: var(--green-3);
+}
+button.unstyled-button {
+  background-color: transparent;
+  border: none;
+}
 
 /* TRANSITIONS */
 .settings > .panel.animate-in {
   opacity: 1;
   visibility: visible;
-  transition-property: opacity, visibility, transform;
-  transition-duration: 200ms, 200ms, 200ms;
-  transition-timing-function: linear, linear, ease-out;
+  transition-property: all, transform;
+  transition-duration: 200ms;
+  transition-timing-function: linear, ease-out;
 }
 .settings > .panel.animate-out {
   opacity: 0;
@@ -124,22 +157,7 @@ svg {
   transition-duration: 200ms, 200ms, 200ms;
   transition-timing-function: linear, linear, ease-in;
 }
-.opacity {
-  fill-opacity: 0.5;
-  transition-property: fill-opacity;
-  transition-duration: 200ms;
-  transition-timing-function: linear;
-}
-.opacity:hover {
-  fill-opacity: 1;
-}
-.rotate-on {
-  transition: transform 200ms ease-in-out;
-  transform: rotate(45deg);
-}
-.rotate-off {
-  transition: transform 200ms ease-in-out;
-}
+
 .settings-toggle {
   transition-property: fill-opacity, fill, filter, transform;
   transition-duration: 200ms;
@@ -158,24 +176,9 @@ button:hover > .settings-toggle.enabled,
   transform: rotate(35deg);
 }
 .settings-toggle.enabled {
-  fill: black;
+  fill: var(--text);
   transform: rotate(45deg);
   filter: none;
-}
-
-/* LOOKS */
-.stadium {
-  border-radius: 10000px;
-}
-.round,
-.round1 {
-  border-radius: 20px;
-}
-.round2 {
-  border-radius: 15px;
-}
-.round3 {
-  border-radius: 10px;
 }
 
 /* LAYOUT */
@@ -194,10 +197,13 @@ button:hover > .settings-toggle.enabled,
 
 /* Components */
 .panel {
-  background-color: #ffffffa0;
+  background-color: rgba(var(--background-rgb), 0.5);
+  /* padding: 10px; */
   border: 10px solid transparent;
-  border-radius: 10px;
+  border-radius: 20px;
 }
+
+/* LIST */
 .v-list {
   display: flex;
   flex-flow: column nowrap;
@@ -219,12 +225,12 @@ button:hover > .settings-toggle.enabled,
 }
 .h-list::-webkit-scrollbar-thumb,
 .v-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 128, 0, 0.5);
+  background: rgba(var(--green-rgb), 0.5);
   border-radius: 5px;
 }
 .h-list::-webkit-scrollbar-thumb:hover,
 .v-list::-webkit-scrollbar-thumb:hover {
-  background: green;
+  background: var(--green);
 }
 .h-list.scroll-padding {
   padding-bottom: 3px;
@@ -235,15 +241,14 @@ button:hover > .settings-toggle.enabled,
 .flex-item {
   flex: 1 1 0;
 }
+
 .image {
   background-size: cover;
   background-position: center center;
 }
 
-/* Unique components (should I use ids?) */
+/* UNIQUE COMPONENTS */
 .background {
-  overflow: unset;
-  background-attachment: fixed;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;

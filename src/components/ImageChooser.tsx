@@ -141,7 +141,7 @@ export const ImageChooser: React.FC<ChooserProps> = ({ setBackground }) => {
         )}
       </div>
       <div className="h-list">
-        <label className="flex-item styled-button" htmlFor="upload">
+        <label className="flex-item button" htmlFor="upload">
           Add Wallpapers
         </label>
         <input
