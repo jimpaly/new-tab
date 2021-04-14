@@ -26,13 +26,13 @@ p {
 :root {
   --green-rgb: 27, 179, 40;
   --green: #1bb328;
-  --green-1: #80ff8a;
-  --green-2: #41d94c;
+  --green-1: #aaf2ae;
+  --green-2: #52cc5a;
   --green-3: #1bb328;
   --green-4: #0d8017;
   --red: #cc3529;
-  --red-1: #ff9580;
-  --red-2: #f25d49;
+  --red-1: #ffbfb3;
+  --red-2: #f2513d;
   --red-3: #cc3529;
   --red-4: #991b0f;
   --text: #000000;
@@ -84,7 +84,7 @@ button {
   color: var(--text);
   border-radius: 1000px;
   outline: none;
-  border: var(--green) 2px solid;
+  border: var(--green-2) 2px solid;
   background-color: var(--background);
   text-align: center;
   padding: 5px 10px;
@@ -93,7 +93,7 @@ button {
 }
 .button:hover,
 button:hover {
-  border-color: var(--green-4);
+  border-color: var(--green-3);
   background-color: var(--green-1);
 }
 .button:active,
@@ -120,10 +120,10 @@ button:disabled:hover {
 }
 
 .danger-button {
-  border-color: var(--red);
+  border-color: var(--red-2);
 }
 .danger-button:hover {
-  border-color: var(--red-4);
+  border-color: var(--red-3);
   background-color: var(--red-1);
 }
 .danger-button:active {
@@ -139,6 +139,7 @@ button:disabled:hover {
 button.unstyled-button {
   background-color: transparent;
   border: none;
+  padding: 0px;
 }
 
 /* TRANSITIONS */
@@ -169,15 +170,15 @@ button.unstyled-button {
 button:hover > .settings-toggle,
 .settings-toggle:hover {
   fill-opacity: 1;
-  transform: rotate(10deg);
+  transform: rotate(15deg);
 }
 button:hover > .settings-toggle.enabled,
 .settings-toggle.enabled:hover {
-  transform: rotate(35deg);
+  transform: rotate(75deg);
 }
 .settings-toggle.enabled {
   fill: var(--text);
-  transform: rotate(45deg);
+  transform: rotate(90deg);
   filter: none;
 }
 

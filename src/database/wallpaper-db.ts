@@ -1,7 +1,8 @@
 import * as Canvas from "canvas";
 import { oneLine } from "common-tags";
+import { productionOnly } from "../decorators";
 
-const isTest = process.env.NODE_ENV !== "production";
+// const isTest = process.env.NODE_ENV !== "production";
 
 export interface WallpaperData {
   createdAt?: Date; // tags?
@@ -28,7 +29,7 @@ export default class Wallpaper {
 
   loadImage() {
     return new Promise<string | null>((resolve) => {
-      if (isTest) return resolve(this.id);
+      if (process.env.NODE_ENV !== "production") return resolve(this.id);
       chrome.storage.local.get(`image-${this.id}`, (result: any) => {
         if (result && typeof result[`image-${this.id}`] === "string") {
           resolve(result[`image-${this.id}`]);
@@ -41,7 +42,7 @@ export default class Wallpaper {
 
   loadThumbnail() {
     return new Promise<string | null>((resolve) => {
-      if (isTest) return resolve(this.id);
+      if (process.env.NODE_ENV !== "production") return resolve(this.id);
       chrome.storage.local.get(`thumb-${this.id}`, (result: any) => {
         if (result && typeof result[`thumb-${this.id}`] === "string") {
           resolve(result[`thumb-${this.id}`]);
@@ -52,8 +53,8 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly()
   async saveData() {
-    if (isTest) return;
     let data: any = {};
     const meta: WallpaperData = {
       createdAt: this.createdAt ?? undefined,
@@ -65,14 +66,11 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly({ message: "Download" })
   async download(location = "", saveAs = true) {
     let image = await this.loadImage();
     if (!image) return alert("Oops! Something went wrong while trying to load the image!");
     const extension = image.slice(image.indexOf("image/") + 6, image.indexOf(";"));
-    if (isTest)
-      return alert(oneLine`
-        Can't actually download in development version, 
-        but it should download wallpaper.${extension} with ${image}`);
     return new Promise<void>((resolve) => {
       chrome.downloads.download(
         {
@@ -85,9 +83,9 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly()
   delete() {
     return new Promise<void>((resolve, reject) => {
-      if (isTest) reject("Not in production mode");
       chrome.storage.local.remove(
         [`image-${this.id}`, `data-${this.id}`, `thumb-${this.id}`],
         async () => {
@@ -102,16 +100,14 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly({
+    returnPromise: Array.from(
+      { length: 100 },
+      (v, i) => `https://picsum.photos/${800 + i}/${500 + i}`
+    ),
+  })
   static getAllIds() {
     return new Promise<string[]>((resolve) => {
-      if (isTest) {
-        return resolve(
-          Array.from(
-            { length: 100 },
-            (v, i) => `https://picsum.photos/${800 + i}/${500 + i}` //${(8 + i) * 100}/${(16 - i) * 100}`
-          )
-        );
-      }
       chrome.storage.local.get("images", (result: any) => {
         if (result && Array.isArray(result.images)) {
           resolve(result.images);
@@ -123,16 +119,16 @@ export default class Wallpaper {
   }
 
   static async getRandom() {
-    const images = await (await Wallpaper.getMany(await Wallpaper.getAllIds())).filter(
+    const images = (await Wallpaper.getMany(await Wallpaper.getAllIds())).filter(
       (image) => image.enabled
     );
     if (images.length > 0) return images[Math.floor(Math.random() * images.length)];
     else return null;
   }
 
+  @productionOnly({ returnFunc: async (ids: string[]) => ids.map((id) => new Wallpaper(id, {})) })
   static getMany(ids: string[]) {
     return new Promise<Wallpaper[]>((resolve) => {
-      if (isTest) return resolve(ids.map((id) => new Wallpaper(id, {})));
       chrome.storage.local.get(
         ids.map((id) => `data-${id}`),
         (result: any) => {
@@ -150,9 +146,9 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly()
   static get(id: string) {
     return new Promise<Wallpaper | null>((resolve) => {
-      if (isTest) return resolve(null);
       chrome.storage.local.get(`data-${id}`, (result: any) => {
         if (result) {
           resolve(new Wallpaper(id, result[`data-${id}`]));
@@ -163,12 +159,12 @@ export default class Wallpaper {
     });
   }
 
+  @productionOnly()
   static add(file: File) {
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
 
     // Read file with FileReader
     return new Promise<Wallpaper | "notImage" | "tooBig" | null>((resolve) => {
-      if (isTest) return resolve(null);
       // Error if file isn't an image
       if (!file.type.startsWith("image/")) return resolve("notImage");
       // Error if file is too large (>10MB)
@@ -214,9 +210,9 @@ export default class Wallpaper {
   //   alert("Done downloading everything!");
   // }
 
+  @productionOnly()
   static deleteAll() {
     return new Promise<void>((resolve) => {
-      if (isTest) resolve();
       chrome.storage.local.clear(() => {
         if (chrome.runtime.lastError) console.log(chrome.runtime.lastError);
         resolve();
