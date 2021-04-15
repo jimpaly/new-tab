@@ -33,6 +33,7 @@ function dateToString(date: Date) {
 }
 
 function shouldUpdateBackground(oldTime: Date, newTime: Date) {
-  if (newTime.getMinutes() !== oldTime.getMinutes()) return true;
+  if (oldTime.getMinutes() === newTime.getMinutes()) return false;
+  if ([0, 15, 30, 45].includes(newTime.getMinutes())) return true;
   return false;
 }
